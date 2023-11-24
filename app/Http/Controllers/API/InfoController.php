@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Validator;
 class InfoController extends Controller
 {
     //
-    function tambah(Request $request){
+    function tambah(Request $request)
+    {
         $user = User::where([
             'login_token' => $request->token
         ])->first();
@@ -20,8 +21,8 @@ class InfoController extends Controller
             return response()->json([
                 'message' => 'Unauthorisation User'
             ], 401);
-        }else{
-            
+        } else {
+
             $validator = Validator::make($request->all(), [
                 'judul' => 'required|unique:informasis',
                 'deskripsi' => 'required',
@@ -41,7 +42,7 @@ class InfoController extends Controller
                 $file = $request->file('foto');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $file->storeAs('informasi_foto', $filename, 'public');
-                
+
                 $informasi->foto = $filename;
                 $informasi->save();
             }
@@ -57,11 +58,11 @@ class InfoController extends Controller
                     'message' => "tambah data informasi gagal"
                 ], 409);
             }
-    
         }
     }
 
-    function edit(Request $request, $id){
+    function edit(Request $request, $id)
+    {
         $user = User::where([
             'login_token' => $request->token
         ])->first();
@@ -70,7 +71,7 @@ class InfoController extends Controller
             return response()->json([
                 'message' => 'Unauthorisation User'
             ], 401);
-        }else{
+        } else {
             $informasi = Informasi::find($id);
 
             if ($informasi) {
@@ -85,27 +86,28 @@ class InfoController extends Controller
                     $file = $request->file('foto');
                     $filename = time() . '_' . $file->getClientOriginalName();
                     $file->storeAs('informasi_foto', $filename, 'public'); // Simpan foto di penyimpanan yang sesuai
-                    
+
                     $informasi->foto = $filename;
                     $informasi->save();
                 }
-    
+
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Item updated successfully', 
+                    'message' => 'Item updated successfully',
                     'informasi' => $informasi
-                ]); 
-            }else{
+                ]);
+            } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Item updated failled', 
+                    'message' => 'Item updated failled',
                 ]);
             }
         }
     }
 
-    function show(Request $request){
+    function show(Request $request)
+    {
         $user = User::where([
             'login_token' => $request->token
         ])->first();
@@ -114,27 +116,27 @@ class InfoController extends Controller
             return response()->json([
                 'message' => 'Unauthorisation User'
             ], 401);
-        }else{
+        } else {
             $informasi = Informasi::all();
-        
+
             foreach ($informasi as $info) {
                 if ($info->foto) {
                     $info->foto = $info->foto ? asset('storage/informasi_foto/' . $info->foto) : null;
                 }
             }
-        
+
             return response()->json([
                 'informasi' => $informasi
             ]);
-            
+
             return response()->json([
                 'informasi' => $info
             ], 200);
-
         }
     }
 
-    function showid(Request $request, $id){
+    function showid(Request $request, $id)
+    {
         $user = User::where([
             'login_token' => $request->token
         ])->first();
@@ -143,24 +145,24 @@ class InfoController extends Controller
             return response()->json([
                 'message' => 'Unauthorisation User'
             ], 401);
-        }else{
+        } else {
 
             $informasi = Informasi::where('id', $id)->get();
-            
+
             foreach ($informasi as $info) {
                 if ($info->foto) {
                     $info->foto = $info->foto ? asset('storage/informasi_foto/' . $info->foto) : null;
                 }
             }
-        
-            
+
             return response()->json([
                 'informasi' => $informasi
             ], 200);
         }
     }
 
-    function hapus(Request $request, $id){
+    function hapus(Request $request, $id)
+    {
         $user = User::where([
             'login_token' => $request->token
         ])->first();
@@ -169,7 +171,7 @@ class InfoController extends Controller
             return response()->json([
                 'message' => 'Unauthorisation User'
             ], 401);
-        }else{
+        } else {
             $info = Informasi::find($id);
 
             $info->delete();
@@ -180,5 +182,4 @@ class InfoController extends Controller
             ], 200);
         }
     }
-
 }
